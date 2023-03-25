@@ -1,6 +1,5 @@
 package rolnix.zajebistycontent
 
-import mu.KotlinLogging
 import org.lwjgl.opengl.GL30.*
 import org.lwjgl.stb.STBImage.*
 import org.lwjgl.system.MemoryStack

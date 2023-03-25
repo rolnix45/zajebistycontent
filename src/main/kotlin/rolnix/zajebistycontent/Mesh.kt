@@ -1,27 +1,21 @@
 package rolnix.zajebistycontent
 
-import org.joml.Vector3f
 import org.lwjgl.opengl.GL30
 import org.lwjgl.system.MemoryUtil
 import java.nio.FloatBuffer
 import java.nio.IntBuffer
+import java.util.function.Consumer
 
-class Mesh(positions: FloatArray, textCoords: FloatArray, normals: FloatArray, indices: IntArray) {
+open class Mesh(positions: FloatArray, textCoords: FloatArray, normals: FloatArray, indices: IntArray) {
     private var vaoId: Int
 
     private var vboIdList: MutableList<Int>
 
     private var vertexCount: Int
 
-    var texture: Texture? = null
-
-    var color: Vector3f = Vector3f()
-
-    private val defaultColor = Vector3f(0f, 255f, 0f)
+    var material: Material? = null
 
     init {
-        color = defaultColor
-
         var positionBuffer: FloatBuffer = MemoryUtil.memAllocFloat(0)
         var indicesBuffer: IntBuffer = MemoryUtil.memAllocInt(0)
         var textCoordsBuffer: FloatBuffer = MemoryUtil.memAllocFloat(0)
@@ -60,6 +54,7 @@ class Mesh(positions: FloatArray, textCoords: FloatArray, normals: FloatArray, i
             normalsBuffer.put(normals).flip()
             GL30.glBindBuffer(GL30.GL_ARRAY_BUFFER, vboId)
             GL30.glBufferData(GL30.GL_ARRAY_BUFFER, normalsBuffer, GL30.GL_STATIC_DRAW)
+            GL30.glEnableVertexAttribArray(2)
             GL30.glVertexAttribPointer(2, 3, GL30.GL_FLOAT, false, 0, 0)
 
             // INDEX VBO
@@ -80,8 +75,8 @@ class Mesh(positions: FloatArray, textCoords: FloatArray, normals: FloatArray, i
         }
     }
 
-    fun render() {
-        texture?.id?.let {
+    private fun initRender() {
+        material?.texture?.id?.let {
             GL30.glActiveTexture(GL30.GL_TEXTURE0)
             GL30.glBindTexture(GL30.GL_TEXTURE_2D, it)
         }
@@ -90,18 +85,35 @@ class Mesh(positions: FloatArray, textCoords: FloatArray, normals: FloatArray, i
         GL30.glEnableVertexAttribArray(0)
         GL30.glEnableVertexAttribArray(1)
         GL30.glEnableVertexAttribArray(2)
+    }
 
-        GL30.glDrawElements(GL30.GL_TRIANGLES, vertexCount, GL30.GL_UNSIGNED_INT, 0)
-
+    private fun endRender() {
         GL30.glDisableVertexAttribArray(0)
         GL30.glDisableVertexAttribArray(1)
         GL30.glDisableVertexAttribArray(2)
         GL30.glBindVertexArray(0)
+
         GL30.glBindTexture(GL30.GL_TEXTURE_2D, 0)
     }
 
-    fun isTextured(): Boolean {
-        return this.texture != null
+    fun renderList(gameObjects: List<GameObject>, consumer: Consumer<GameObject>) {
+        initRender()
+
+        for (gameObject in gameObjects) {
+            consumer.accept(gameObject)
+
+            GL30.glDrawElements(GL30.GL_TRIANGLES, vertexCount, GL30.GL_UNSIGNED_INT, 0)
+        }
+
+        endRender()
+    }
+
+    fun render() {
+        initRender()
+
+        GL30.glDrawElements(GL30.GL_TRIANGLES, vertexCount, GL30.GL_UNSIGNED_INT, 0)
+
+        endRender()
     }
 
     fun cleanUp() {
@@ -112,7 +124,7 @@ class Mesh(positions: FloatArray, textCoords: FloatArray, normals: FloatArray, i
             GL30.glDeleteBuffers(vboId)
         }
 
-        texture?.cleanup()
+        material?.texture?.cleanup()
 
         GL30.glBindVertexArray(0)
         GL30.glDeleteVertexArrays(vaoId)

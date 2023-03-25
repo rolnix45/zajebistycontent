@@ -64,18 +64,22 @@ object Hud {
         nvgText(vg, 1f, lineSpacing * 2,
             "CAMERA SPEED: ${String.format("%.2f", Game.cameraSpeed)} ; and \'")
 
+        nvgText(vg, 1f, lineSpacing * 3,
+            "CAMERA POSITION: ${String.format("X (%.4f) Y (%.4f) Z (%.4f)",
+                Camera.position.x, Camera.position.y, Camera.position.z)}")
+
         nvgEndFrame(vg)
 
         Game.restoreState()
     }
 
 
-    private fun rgba(r: Int, g: Int, b: Int, a: Int, colour: NVGColor): NVGColor {
-        colour.r(r / 255.0f)
-        colour.g(g / 255.0f)
-        colour.b(b / 255.0f)
-        colour.a(a / 255.0f)
-        return colour
+    private fun rgba(r: Int, g: Int, b: Int, a: Int, color: NVGColor): NVGColor {
+        color.r(r / 255.0f)
+        color.g(g / 255.0f)
+        color.b(b / 255.0f)
+        color.a(a / 255.0f)
+        return color
     }
 
     fun cleanup() {

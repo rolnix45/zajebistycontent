@@ -1,7 +1,6 @@
 package rolnix.zajebistycontent
 
-import org.lwjgl.glfw.GLFW
-import org.lwjgl.glfw.GLFW.GLFW_RELEASE
+import org.lwjgl.glfw.GLFW.*
 import org.lwjgl.glfw.GLFWCursorEnterCallback
 import org.lwjgl.glfw.GLFWCursorPosCallback
 import org.lwjgl.glfw.GLFWKeyCallback
@@ -39,7 +38,7 @@ object Input {
         val keyStates: Array<Boolean> = Array(65535) { false }
 
         override fun invoke(window: Long, key: Int, scancode: Int, action: Int, mods: Int) {
-            if (key != GLFW.GLFW_KEY_UNKNOWN)
+            if (key != GLFW_KEY_UNKNOWN)
                 keyStates[key] = action != GLFW_RELEASE
         }
     }

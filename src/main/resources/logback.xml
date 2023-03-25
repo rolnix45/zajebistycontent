@@ -18,7 +18,6 @@
     </appender>
 
     <root>
-        <level>debug</level>
         <appender-ref ref="STDOUT" />
         <appender-ref ref="FILE" />
     </root>

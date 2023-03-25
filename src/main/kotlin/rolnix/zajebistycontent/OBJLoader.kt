@@ -1,14 +1,18 @@
 package rolnix.zajebistycontent
 
+import mu.KotlinLogging
 import org.joml.Vector2f
 import org.joml.Vector3f
 
-
 object OBJLoader {
+    private val logger = KotlinLogging.logger {}
 
     @Throws(Exception::class)
     fun loadMesh(fileName: String): Mesh {
         val lines: List<String> = Utils.readAllLines(fileName)
+        if (lines.isEmpty()) {
+            logger.error { "Error loading object file: $fileName" }
+        }
 
         val vertices: MutableList<Vector3f> = ArrayList()
         val textures: MutableList<Vector2f> = ArrayList()

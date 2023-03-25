@@ -1,6 +1,7 @@
 package rolnix.zajebistycontent
 
 import org.joml.Math
+import org.joml.Matrix4f
 import org.joml.Vector2d
 import org.joml.Vector2f
 import org.joml.Vector3f
@@ -19,6 +20,8 @@ object Camera {
     var position: Vector3f = Vector3f()
     var rotation: Vector3f = Vector3f()
 
+    var viewMatrix = Matrix4f()
+
     fun setPosition(x: Float, y: Float, z: Float) {
         position.x = x
         position.y = y
@@ -31,7 +34,7 @@ object Camera {
 
     fun resetPosition() {
         position.x = Random.nextInt(0, 16).toFloat()
-        position.y = 9f
+        position.y = 0f
         position.z = Random.nextInt(0, 16).toFloat()
 
         rotation.set(0f, 0f, 0f)
@@ -59,6 +62,10 @@ object Camera {
         rotation.x += offsetX
         rotation.y += offsetY
         rotation.z += offsetZ
+    }
+
+    fun updateViewMatrix(): Matrix4f {
+        return Transformations.updateGenericViewMatrix(position, rotation, viewMatrix)
     }
 
     fun mouseControl() {
